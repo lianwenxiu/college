@@ -29,15 +29,31 @@
                 <university-area :school-area-list="$store.state.school_area_obj"></university-area>
             </div>
         </div> 
-        <choice-subjects></choice-subjects>      
+		<!-- 选考科目-->
+        <choice-subjects></choice-subjects>  
+		<!-- 高校名称 -->
+		 <!-- <table class="table_college_name"> -->
+			<table-wrap :title="table_title">
+				<table-row v-for="(x, index) in table_row" :row="x" :key="index"></table-row>
+			</table-wrap>  
+		 <!-- </table>         -->
     </div>
 </template>
 <script>
 import scholl_range from "../components/school_range.vue";
 import scholl_area from "../components/school_area.vue";
 import choice_subjects from "../components/subjects.vue";
+import table_wrap from '../components/table_wrap.vue';
+import table_row from '../components/table_row.vue';
+
 export default {
-  name: "overall", 
+  name: "overall",
+  data:() => {
+	 return {
+		table_title:[],
+		table_row: []
+	 }	
+  },
   computed: {
     selected_range_item: function() {
       return this.$store.getters.selected_range;
@@ -67,7 +83,6 @@ export default {
       });
       vm.$store.commit("updated_school_range", range_data);
     });
-
     vm.$http.get("/src/data/data.json").then(function(res) {
       let area_data = res.data.school_area_list.map((value, index) => {
         return index == 0
@@ -76,18 +91,23 @@ export default {
       });
       vm.$store.commit("updated_school_area", area_data);
     });
-
     // 综合检索/选考科目
-    vm.$http.get("/src/data/综合检索（学校方式聚合）.json").then(function(res) {     
-        vm.$store.commit('choice_subjects', res.data.result);
-        // console.log(res.data.result.analysisData);
-        console.log(res.data.result.rows);
-    });
+    vm.$http.get("/src/data/综合检索（学校方式聚合）.json").then(function(res) {
+		// let len = res.data.result.rows.length;
+		vm.$store.commit("choice_subjects", res.data.result);
+		vm.table_title = res.data.result.title;
+		vm.table_row = res.data.result.rows;
+
+		console.log(vm.table_title);
+		console.log(vm.table_row);
+	});	
   },
   components: {
     "university-level": scholl_range,
     "university-area": scholl_area,
-    "choice-subjects": choice_subjects
+    "choice-subjects": choice_subjects,
+    "table-wrap": table_wrap,
+    "table-row": table_row
   }
 };
 </script>
@@ -150,62 +170,5 @@ span {
   cursor: pointer;
 }
 /* 已选条件样式结束 */
-/* 表格数据的样式开始 */
-.tit {
-  width: 100%;
-  font-size: 14px;
-  color: #000;
-  cursor: pointer;
-  border-bottom: 1px solid #ccc;
-}
-.tip {
-  color: #ff0000;
-  line-height: 40px;
-  font-size: 13px;
-}
-.table_left,.table_right{
-    width: 50%;
-    float: left;
-    border-collapse: collapse;
-}
-.table{
-    clear: both;
-    width: 100%;
-    border-collapse: collapse;
-}
 
-.thead{
-    background:#00A05C;
-}
-.thead th{
-    height: 45px;
-    line-height: 45px;
-    font-size: 14px;
-    color:#fff;
-    font-weight: normal;
-}
-td{
-    width: 150px;
-    height: 45px;
-    line-height: 45px;
-    text-align: center;
-    border:1px solid #ccc;    
-}
-.add{
-  float: left;;
-  width: 15px;
-  height: 15px;  
-  text-align: center;
-  line-height: 15px;
-  color:#fff;
-  background: #00A05C;
-  font-weight: bold;
-  font-size: 15px;
-  margin-top: 15px;
-  margin-left: 5px;
-  cursor: pointer;
-}
-.first-td{
-  color: #00A05C;
-}
 </style>

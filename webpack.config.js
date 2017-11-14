@@ -32,7 +32,7 @@ module.exports = {
     ],
     devtool: 'cheap-eval-source-map',
     resolve: {
-        extensions: ['.css', '.js'],
+        extensions: ['.css', '.js', '.vue'],
         alias: {
             'vue': 'vue/dist/vue.js'
         }       

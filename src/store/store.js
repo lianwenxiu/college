@@ -10,7 +10,7 @@ let storeObj = new Vuex.Store({
         subjects_right: [],
         college_title: [],
         college_name: []
-
+     
     },
     mutations: {
         // 第一个参数是上面的state，第二个是接收到的数据
@@ -44,22 +44,22 @@ let storeObj = new Vuex.Store({
             // console.log(state.school_range_obj)
         },
         reset_school_area: function(state, item){
-            let brr = [...state.school_area_obj];           
-            if(item.index != 0){
-                brr[item.index].selected = item.selected;
-                brr[0].selected = false;
-            } else {
-                brr.forEach((val, index) => {
+            let brr =  JSON.parse(JSON.stringify(state.school_area_obj));
+            if(item.index === 0){   
+                brr = brr.map((val, index) => {
                     val.selected = (index == 0);
+                    return val;
                 })
-                // val.selected = (index == 0);
-            }          
+            } else {
+                brr[0].selected = false;
+                brr[item.index].selected = item.selected;
+            }         
 
             var selected_none = true;
             brr.forEach((value, index) => {
-                // if (index == 0) return;
+                if (index == 0) return;
                 if(item.selected){
-                    selected_none = false;
+                    selected_none = false;                  
                 }
             })
             if(selected_none){
@@ -80,10 +80,7 @@ let storeObj = new Vuex.Store({
         choice_subjects: function(state, params){ //选考科目
             // 把数据处理成两组
             state.subjects_left = params.analysisData.slice(0,21);
-            state.subjects_right = params.analysisData.slice(21); 
-            state.college_title = params.title;
-            state.college_name = params.rows;
-            // console.log( state.college_name)     
+            state.subjects_right = params.analysisData.slice(21);        
         },
         
     },
